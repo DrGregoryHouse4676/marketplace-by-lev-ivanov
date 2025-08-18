@@ -2,14 +2,13 @@ from django.db import models
 from core.models import TimeStampedModel, PaymentStatus, CurrencyChoices
 from orders.models import Order
 
-
 class Payment(TimeStampedModel):
     order = models.OneToOneField(
         Order,
         on_delete=models.CASCADE,
         related_name="payment"
     )
-    provider = models.CharField(max_length=32)  # 'stripe'
+    provider = models.CharField(max_length=32)
     provider_charge_id = models.CharField(
         max_length=128,
         unique=True
@@ -29,4 +28,8 @@ class Payment(TimeStampedModel):
     )
 
     class Meta:
-        indexes = [models.Index(fields=["provider", "status"]) ]
+        indexes = [models.Index(fields=[
+            'provider',
+            'status']
+        )
+        ]
