@@ -3,7 +3,6 @@ from django.db import models
 from core.models import TimeStampedModel
 from catalog.models import Product
 
-
 class Cart(TimeStampedModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -18,11 +17,9 @@ class Cart(TimeStampedModel):
         null=True,
         db_index=True
     )
-
     def __str__(self):
         owner = self.user_id or self.session_key or "anon"
         return f"Cart<{owner}:{self.id}>"
-
 
 class CartItem(TimeStampedModel):
     cart = models.ForeignKey(
@@ -40,6 +37,9 @@ class CartItem(TimeStampedModel):
         max_digits=12,
         decimal_places=2
     )
-
     class Meta:
         unique_together = ("cart", "product")
+
+    @property
+    def line_total(self):
+        return self.quantity * self.price_snapshot
