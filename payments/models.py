@@ -2,6 +2,7 @@ from django.db import models
 from core.models import TimeStampedModel, PaymentStatus, CurrencyChoices
 from orders.models import Order
 
+
 class Payment(TimeStampedModel):
     order = models.OneToOneField(
         Order,
