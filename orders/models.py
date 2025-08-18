@@ -1,11 +1,9 @@
-from datetime import timezone
-
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 from core.models import TimeStampedModel, OrderStatus, ShipmentStatus, CurrencyChoices
 from accounts.models import Address, SellerProfile
 from catalog.models import Product
-
 
 class Order(TimeStampedModel):
     buyer = models.ForeignKey(
@@ -18,14 +16,12 @@ class Order(TimeStampedModel):
         on_delete=models.PROTECT,
         related_name="orders"
     )
-
     status = models.CharField(
         max_length=16,
         choices=OrderStatus.choices,
         default=OrderStatus.CREATED,
         db_index=True
     )
-
     subtotal = models.DecimalField(
         max_digits=12,
         decimal_places=2
@@ -44,21 +40,17 @@ class Order(TimeStampedModel):
         choices=CurrencyChoices.choices,
         default=CurrencyChoices.UAH
     )
-
     shipping_address = models.ForeignKey(
         Address,
         on_delete=models.PROTECT,
-        related_name="orders"
+        related_name='orders'
     )
-
     placed_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
-        indexes = [models.Index(fields=["status", "placed_at"]) ]
-
+        indexes = [models.Index(fields=["status", "placed_at"])]
     def __str__(self):
         return f"Order#{self.id} ({self.status})"
-
 
 class OrderItem(TimeStampedModel):
     order = models.ForeignKey(
