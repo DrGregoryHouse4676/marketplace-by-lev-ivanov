@@ -9,6 +9,7 @@ from catalog.models import Product
 from .models import Order, OrderItem
 from core.models import OrderStatus
 
+
 @transaction.atomic
 def checkout_cart(
         cart: Cart,
@@ -33,8 +34,11 @@ def checkout_cart(
         for it in seller_items:
             product = Product.objects.select_for_update().get(pk=it.product_id)
             if it.quantity > product.quantity:
-                raise ValueError(f"Not enough goods '{product.title}'. Available: {product.quantity}")
-            Product.objects.filter(pk=product.pk).update(quantity=F('quantity') - it.quantity)
+                raise ValueError(f"Not enough goods '{product.title}'."
+                                 f" Available: {product.quantity}")
+
+            (Product.objects.filter(pk=product.pk).
+             update(quantity=F('quantity') - it.quantity))
             subtotal += it.quantity * it.price_snapshot
         order = Order.objects.create(
             buyer=buyer,

@@ -1,9 +1,14 @@
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
-from core.models import TimeStampedModel, OrderStatus, ShipmentStatus, CurrencyChoices
+from core.models import (TimeStampedModel,
+                         OrderStatus,
+                         ShipmentStatus,
+                         CurrencyChoices
+                         )
 from accounts.models import Address, SellerProfile
 from catalog.models import Product
+
 
 class Order(TimeStampedModel):
     buyer = models.ForeignKey(
@@ -49,8 +54,10 @@ class Order(TimeStampedModel):
 
     class Meta:
         indexes = [models.Index(fields=["status", "placed_at"])]
+
     def __str__(self):
         return f"Order#{self.id} ({self.status})"
+
 
 class OrderItem(TimeStampedModel):
     order = models.ForeignKey(
