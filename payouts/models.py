@@ -1,38 +1,27 @@
 from django.db import models
-from core.models import TimeStampedModel, PayoutStatus, CurrencyChoices
-from accounts.models import SellerProfile
-from orders.models import Order
+from core.enums import PayoutStatus
 
-
-class SellerPayout(TimeStampedModel):
+class SellerPayout(models.Model):
     seller = models.ForeignKey(
-        SellerProfile,
-        on_delete=models.CASCADE,
+        "accounts.SellerProfile",
+        on_delete=models.PROTECT,
         related_name="payouts"
     )
     order = models.OneToOneField(
-        Order,
+        "orders.Order",
         on_delete=models.PROTECT,
         related_name="payout"
     )
     amount = models.DecimalField(
         max_digits=12,
-        decimal_places=2
-    )
-    currency = models.CharField(
-        max_length=3,
-        choices=CurrencyChoices.choices
-    )
+        decimal_places=2)
+    currency = models.CharField(max_length=3)
     status = models.CharField(
-        max_length=12,
+        max_length=20,
         choices=PayoutStatus.choices,
         default=PayoutStatus.PENDING
     )
     paid_at = models.DateTimeField(
-        blank=True,
-        null=True
+        null=True,
+        blank=True
     )
-
-    class Meta:
-        indexes = [models.Index(fields=["seller", "status"]) ]
-
